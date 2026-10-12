@@ -2,7 +2,7 @@
 
 import sys
 
-from .repl import run
+from .repl import main
 
 if __name__ == "__main__":
-    sys.exit(run())
+    sys.exit(main())

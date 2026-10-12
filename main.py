@@ -2,7 +2,7 @@
 
 import sys
 
-from mini_redis.repl import run
+from mini_redis.repl import main
 
 if __name__ == "__main__":
-    sys.exit(run())
+    sys.exit(main())

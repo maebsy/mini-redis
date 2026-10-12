@@ -322,8 +322,8 @@ class Server:
             snapshot = s.ttl_heap_snapshot()
             now = s.now()
             lines = DynamicArray()
-            lines.append("heap_size:{} live_ttl_keys:{} (나머지는 lazy deletion 대기 중인 stale 항목)".format(
-                len(snapshot), s.ttl_key_count))
+            stale = len(snapshot) - s.ttl_key_count
+            lines.append("heap_size:{} live_ttl_keys:{} stale_entries:{}".format(len(snapshot), s.ttl_key_count, stale))
             tree = BinaryTree.from_level_order(snapshot)
             for line in tree.render(lambda item: "{} (in {:.1f}s)".format(item[1], item[0] - now)):
                 lines.append(line)

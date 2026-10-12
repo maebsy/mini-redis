@@ -56,3 +56,14 @@ def run(server: Optional[Server] = None, stdin: TextIO = sys.stdin, stdout: Text
         if output:
             print(output, file=stdout)
     return 0
+
+
+def main() -> int:
+    """콘솔 진입점. ``python main.py | head`` 처럼 출력이 중간에 끊겨도 조용히 종료한다."""
+    import os
+    try:
+        return run()
+    except BrokenPipeError:
+        devnull = os.open(os.devnull, os.O_WRONLY)
+        os.dup2(devnull, sys.stdout.fileno())
+        return 0
