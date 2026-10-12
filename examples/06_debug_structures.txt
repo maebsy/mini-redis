@@ -1,0 +1,19 @@
+# 내부 자료구조 관찰 (설명용 확장 명령 + 보너스 트리)
+SET apple 1
+SET mango 1
+SET cherry 1
+SET banana 1
+SET kiwi 1
+SET grape 1
+SET lemon 1
+DEBUG HASHMAP
+GET apple
+DEBUG LRU
+EXPIRE mango 50
+EXPIRE apple 10
+EXPIRE kiwi 30
+EXPIRE grape 20
+EXPIRE lemon 40
+DEBUG TTLHEAP
+DEBUG SORTEDKEYS
+DEBUG RANGEKEYS banana kiwi

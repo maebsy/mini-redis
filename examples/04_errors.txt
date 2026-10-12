@@ -1,0 +1,9 @@
+# 표준 에러 형식
+HELLO
+GET
+SET onlykey
+CONFIG SET maxmemory abc
+EXPIRE k 1.5
+SET k "unbalanced
+CONFIG SET maxmemory 10
+SET too_long_key value

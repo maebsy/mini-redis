@@ -1,0 +1,15 @@
+# [보너스] Pub/Sub — 가상 클라이언트 alice, bob 이 구독하고 default 가 발행
+CLIENT SWITCH alice
+SUBSCRIBE news
+CLIENT SWITCH bob
+SUBSCRIBE news sports
+CLIENT SWITCH default
+PUBLISH news "Mini Redis 1.0 released"
+PUBLISH sports "goal!"
+PUBLISH nobody "no subscribers"
+CLIENT LIST
+# alice 로 전환하면 버퍼(Queue)에 쌓인 메시지가 출력된다
+CLIENT SWITCH alice
+CLIENT SWITCH bob
+UNSUBSCRIBE
+HISTORY 3

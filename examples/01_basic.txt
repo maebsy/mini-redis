@@ -1,0 +1,13 @@
+# String 타입 기본 명령어
+SET user:1 "Alice"
+SET user:2 "Bob Kim"
+GET user:1
+GET user:2
+GET user:999
+EXISTS user:1
+EXISTS user:999
+DBSIZE
+KEYS
+DEL user:1
+DEL user:1
+DBSIZE

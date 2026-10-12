@@ -1,0 +1,19 @@
+# TTL: 만료 시간 설정과 조회
+SET session:1 "token-abc"
+TTL session:1
+EXPIRE session:1 3
+TTL session:1
+EXPIRE ghost 10
+TTL ghost
+# 3초 대기 (DEBUG SLEEP 은 시연용 확장 명령)
+DEBUG SLEEP 3.1
+GET session:1
+TTL session:1
+# SET 으로 덮어쓰면 TTL 은 초기화된다
+SET k "v1"
+EXPIRE k 100
+SET k "v2"
+TTL k
+# 0 이하 값은 즉시 만료
+EXPIRE k 0
+EXISTS k

@@ -1,0 +1,16 @@
+# maxmemory 30 바이트에서 LRU 자동 제거 (과제 결과 예시와 동일한 흐름)
+CONFIG SET maxmemory 30
+SET user:1 "Alice"
+SET user:2 "Bob"
+INFO memory
+# user:3 저장 시 33 > 30 → 가장 오래 사용하지 않은 user:1 제거
+SET user:3 "Charlie"
+GET user:1
+INFO memory
+KEYS
+# GET 은 LRU 를 갱신한다: user:2 를 읽으면 다음 제거 대상은 user:3
+GET user:2
+DEBUG LRU
+SET user:4 "Dan"
+KEYS
+INFO memory
