@@ -42,7 +42,7 @@ evicted_keys:1
 
 ## 빠른 시작
 
-외부 라이브러리 없이 Python 3.8 이상만 있으면 됩니다.
+외부 라이브러리 없이 Python 3.8 이상만 있으면 됩니다. 기준 버전은 3.14(`.python-version`)이고, [uv](https://docs.astral.sh/uv/) 를 쓰면 `uv run python ...` 으로 같은 버전에서 실행됩니다.
 
 ```bash
 git clone https://github.com/maebsy/mini-redis.git
@@ -244,7 +244,7 @@ python -m unittest discover -s tests -t . -v
 | `test_bonus_structures.py` | 스택/큐/덱, 트리 순회, BST 삭제 3가지 경우 |
 | `test_constraints.py` | dict/set/collections 미사용, 내장 `hash()` 미사용, docstring |
 
-TTL 테스트는 가짜 시계(`tests/helpers.py::FakeClock`)를 주입해서 실제로 기다리지 않고 시간을 흘려보냅니다. GitHub Actions가 push마다 Python 3.8 · 3.10 · 3.12 · 3.13에서 테스트와 예시 시나리오를 실행합니다.
+TTL 테스트는 가짜 시계(`tests/helpers.py::FakeClock`)를 주입해서 실제로 기다리지 않고 시간을 흘려보냅니다. GitHub Actions가 push마다 Python 3.8 · 3.10 · 3.12 · 3.13 · 3.14에서 테스트와 예시 시나리오를 실행합니다.
 
 ## 문서
 
