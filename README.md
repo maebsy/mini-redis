@@ -244,7 +244,7 @@ python -m unittest discover -s tests -t . -v
 | `test_bonus_structures.py` | 스택/큐/덱, 트리 순회, BST 삭제 3가지 경우 |
 | `test_constraints.py` | dict/set/collections 미사용, 내장 `hash()` 미사용, docstring |
 
-TTL 테스트는 가짜 시계(`tests/helpers.py::FakeClock`)를 주입해서 실제로 기다리지 않고 시간을 흘려보냅니다. GitHub Actions가 push마다 Python 3.8 · 3.10 · 3.12 · 3.13 · 3.14에서 테스트와 예시 시나리오를 실행합니다.
+TTL 테스트는 가짜 시계(`tests/helpers.py::FakeClock`)를 주입해서 실제로 기다리지 않고 시간을 흘려보냅니다. 테스트와 예시 시나리오는 [`.github/workflows/tests.yml`](.github/workflows/tests.yml) 에 Python 3.8 · 3.10 · 3.12 · 3.13 · 3.14 로 정의되어 있고, `uv run scripts/ci_local.py` 로 같은 단계를 내 컴퓨터에서 Python 버전별로 그대로 실행할 수 있습니다 (커밋된 상태 기준, Linux·macOS).
 
 ## 문서
 
