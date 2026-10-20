@@ -225,7 +225,8 @@ mini-redis/
     ├── design.md               # 설계 문서
     ├── checklist.md            # 체크리스트 답변서
     ├── benchmark.md            # 성능 측정 결과
-    └── STACK_QUEUE_DEQUE.md    # [보너스] 스택/큐/덱 정리
+    ├── STACK_QUEUE_DEQUE.md    # [보너스] 스택/큐/덱 정리
+    └── presentation.html       # 동료 평가 발표 슬라이드
 ```
 
 ## 테스트
@@ -254,6 +255,7 @@ TTL 테스트는 가짜 시계(`tests/helpers.py::FakeClock`)를 주입해서 �
 | [`docs/checklist.md`](docs/checklist.md) | 미션 체크리스트 전 항목에 대한 근거와 답변 |
 | [`docs/benchmark.md`](docs/benchmark.md) | 1천 ~ 10만 건 성능 측정과 병목 분석 |
 | [`docs/STACK_QUEUE_DEQUE.md`](docs/STACK_QUEUE_DEQUE.md) | [보너스] 스택/큐/덱 개념과 활용처 |
+| [`docs/presentation.html`](docs/presentation.html) | 동료 평가 발표 슬라이드 73장 (브라우저로 열기, ← → 넘기기 · N 발표자 노트 · 인쇄하면 PDF) |
 
 ## 설계 원칙과 범위
 
