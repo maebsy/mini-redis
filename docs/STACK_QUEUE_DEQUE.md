@@ -36,6 +36,7 @@ Deque  ⇄ [ a | b | c ] ⇄                     (양쪽 모두)
 | Queue | `pubsub.py` — 구독자별 메시지 버퍼 (`Client.inbox`) | 발행된 순서대로 받아야 하므로 FIFO |
 | Queue | `binary_tree.py` — 레벨 순회, `bst.py` — 높이 계산 | BFS는 가까운 노드부터 방문 = FIFO |
 | Deque (maxlen) | `server.py` — 최근 명령어 `HISTORY` | 새 명령은 뒤에 넣고, 100개를 넘으면 가장 오래된 앞쪽을 버림 |
+| Deque (maxlen) | `store.py` — 최근 LRU 제거 기록 `DEBUG EVICTIONS` | 제거할 때마다 (키, 크기, 시각)을 뒤에 넣고, 16개를 넘으면 가장 오래된 앞쪽을 버림 |
 | Stack | `bst.py` — 중위 순회, 범위 조회 | 재귀 호출 스택을 직접 만든 스택으로 대체해 깊은 트리에서도 RecursionError 없음 |
 
 ## 실무와 Redis에서의 예
