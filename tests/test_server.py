@@ -127,6 +127,28 @@ class DebugAndExtensionTest(ServerTestCase):
         first_tree_line = out.splitlines()[1]
         self.assertTrue(first_tree_line.startswith("k1"))  # 10초짜리가 루트(최솟값)
 
+    def test_debug_evictions(self):
+        self.assertEqual(self.run_cmd("DEBUG EVICTIONS").splitlines()[1], "(empty)")
+        self.run_cmd("CONFIG SET maxmemory 30")
+        self.run_cmd('SET user:1 "Alice"')
+        self.run_cmd('SET user:2 "Bob"')
+        self.run_cmd('SET user:3 "Charlie"')  # user:1 제거
+        out = self.run_cmd("DEBUG EVICTIONS")
+        lines = out.splitlines()
+        self.assertIn("evicted_keys:1", lines[0])
+        self.assertIn("recent_logged:1", lines[0])
+        self.assertTrue(lines[1].startswith("1) user:1 (11 bytes,"))
+
+    def test_debug_evictions_count_and_errors(self):
+        self.run_cmd("CONFIG SET maxmemory 6")
+        for i in range(4):
+            self.run_cmd("SET k{} vv".format(i))  # 각 4바이트 → 매번 직전 키 제거
+        out = self.run_cmd("DEBUG EVICTIONS 1")
+        self.assertEqual(len(out.splitlines()), 2)  # 헤더 + 1개
+        self.assertEqual(self.run_cmd("DEBUG EVICTIONS 0"), "(error) ERR count must be positive")
+        self.assertEqual(self.run_cmd("DEBUG EVICTIONS x"),
+                         "(error) ERR value is not an integer or out of range")
+
     def test_help_lists_groups(self):
         out = self.run_cmd("HELP")
         self.assertIn("# 필수 명령어", out)

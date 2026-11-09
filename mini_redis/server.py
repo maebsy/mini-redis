@@ -300,6 +300,7 @@ class Server:
                 "DEBUG SORTEDKEYS         키를 정렬해서 출력 (보너스: BST 중위 순회)",
                 "DEBUG RANGEKEYS lo hi    lo <= key <= hi 범위 조회 (보너스: BST)",
                 "DEBUG SLEEP seconds      지정한 초만큼 대기 (TTL 시연용)",
+                "DEBUG EVICTIONS [count]  최근 LRU 제거 기록 (최신순, 최대 16개)",
             ])
         if sub == "HASHMAP":
             hm = s.hashmap
@@ -351,6 +352,30 @@ class Server:
                 raise CommandError("ERR value is not a valid float")
             self._sleep(seconds)
             return R.OK
+        if sub == "EVICTIONS":
+            if len(args) > 2:
+                raise CommandError(ERR_ARITY.format(typed + " " + args[0]))
+            items = DynamicArray(items=s.recent_evictions)  # front=오래된 것 → back=최신
+            count = len(items)
+            if len(args) == 2:
+                count = parse_int(args[1])
+                if count < 1:
+                    raise CommandError("ERR count must be positive")
+            now = s.now()
+            lines = DynamicArray()
+            lines.append("evicted_keys:{} recent_logged:{} (최대 16개 보관, FLUSHALL 시 초기화)".format(
+                s.evicted_keys, len(items)))
+            if len(items) == 0:
+                lines.append("(empty)")
+            else:
+                shown = 0
+                for i in range(len(items) - 1, -1, -1):  # 최신순
+                    if shown >= count:
+                        break
+                    key, size, evicted_at = items[i]
+                    lines.append("{}) {} ({} bytes, {:.1f}s ago)".format(shown + 1, key, size, now - evicted_at))
+                    shown += 1
+            return R.Verbatim(lines)
         raise CommandError("ERR unknown subcommand '{}'. Try DEBUG HELP.".format(args[0]))
 
     # ================================================================ 보너스 명령어
