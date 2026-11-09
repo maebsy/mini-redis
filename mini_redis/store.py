@@ -29,6 +29,9 @@ from .structures.dynamic_array import DynamicArray
 from .structures.hashmap import HashMap
 from .structures.linked_list import DoublyLinkedList, Node
 from .structures.min_heap import MinHeap
+from .structures.stack_queue_deque import Deque
+
+RECENT_EVICTIONS_MAX = 16  # 최근 LRU 제거 기록 보관 개수 (가득 차면 가장 오래된 것부터 버림)
 
 
 class OutOfMemoryError(Exception):
@@ -70,6 +73,7 @@ class Store:
         self.evicted_keys = 0
         self.expired_keys = 0
         self._ttl_keys = 0              # 현재 만료 시간이 설정된 살아있는 키 수
+        self.recent_evictions = Deque(maxlen=RECENT_EVICTIONS_MAX)  # 최근 LRU 제거 기록 (key, size, evicted_at)
 
     # ================================================================ 내부 헬퍼
     def _remove_entry(self, entry: _Entry) -> None:
@@ -110,6 +114,7 @@ class Store:
             victim = self._data.get(victim_key)
             self._remove_entry(victim)
             self.evicted_keys += 1
+            self.recent_evictions.append((victim.key, victim.size, self._clock()))
             evicted += 1
         return evicted
 

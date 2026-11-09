@@ -14,3 +14,5 @@ DEBUG LRU
 SET user:4 "Dan"
 KEYS
 INFO memory
+# 최근 LRU 제거 기록 (최신순)
+DEBUG EVICTIONS

@@ -116,6 +116,44 @@ class LruEvictionTest(unittest.TestCase):
             self.store.set_maxmemory(-1)
 
 
+class EvictionLogTest(unittest.TestCase):
+    def setUp(self):
+        self.clock = FakeClock()
+        self.store = Store(clock=self.clock)
+
+    def test_records_victims_in_lru_order_with_size_and_time(self):
+        s = self.store
+        s.set_maxmemory(30)
+        s.set("user:1", "Alice")    # 11
+        self.clock.advance(2)
+        s.set("user:2", "Bob")      # 9  → 20
+        s.set("user:3", "Charlie")  # 13 → 33 > 30 → user:1 제거
+        log = list(s.recent_evictions)
+        self.assertEqual(log, [("user:1", 11, 1002.0)])
+
+    def test_log_bounded_to_16_drops_oldest(self):
+        s = self.store
+        s.set_maxmemory(5)          # 한 번에 하나만 들어갈 크기 (각 엔트리 3~4바이트)
+        for i in range(20):
+            s.set("k{}".format(i), "v")  # 매번 직전 키를 제거
+        log = list(s.recent_evictions)
+        self.assertEqual(len(log), 16)                  # 16개로 제한
+        self.assertEqual(log[0][0], "k3")               # 가장 오래된 k0~k2 는 밀려남
+        self.assertEqual(log[-1][0], "k18")             # 가장 최근 제거
+        self.assertEqual(s.evicted_keys, 19)
+
+    def test_shrink_records_all_evicted_in_order(self):
+        s = self.store
+        s.set("a", "1")   # 2
+        s.set("b", "2")   # 2
+        s.set("c", "3")   # 2  → 총 6, LRU 순서 a, b, c
+        evicted = s.set_maxmemory(2)  # a, b 제거 (c 만 남음)
+        self.assertEqual(evicted, 2)
+        log = list(s.recent_evictions)
+        self.assertEqual([k for k, _, _ in log], ["a", "b"])
+        self.assertEqual([size for _, size, _ in log], [2, 2])
+
+
 class TtlTest(unittest.TestCase):
     def setUp(self):
         self.clock = FakeClock()
