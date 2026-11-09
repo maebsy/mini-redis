@@ -32,7 +32,8 @@
 ### 1-2. LRU 자동 제거: maxmemory 초과 시 가장 오래된 키가 제거되는가 ✅
 
 - ▶️ `python main.py < examples/02_lru.txt` (과제 결과 예시와 같은 흐름)
-- 🧪 `tests/test_store.py::LruEvictionTest` (예시 재현, GET이 LRU를 갱신하는지, 여러 개 연속 제거, OOM)
+- 🧪 `tests/test_store.py::LruEvictionTest` (예시 재현, GET이 LRU를 갱신하는지, 여러 개 연속 제거, OOM), `EvictionLogTest` (제거 기록)
+- ▶️ `DEBUG EVICTIONS` — 어떤 키가 언제 제거됐는지 최신순으로 확인 ([`design.md` 3.8](design.md#38-제거-기록-관찰-debug-evictions)), 여러 키 제거 순서 예시는 [`design.md` 3.3](design.md#config-set-maxmemory-축소와-여러-키-제거-순서)
 
 ```
 CONFIG SET maxmemory 30
@@ -200,6 +201,8 @@ LRU 갱신을 "반환 성공 시에만" 하는 이유는, 없는 키나 만료�
 
 ### 4-1. LRU 대신 LFU를 구현한다면 자료구조를 어떻게 바꿔야 하는가
 
+📄 상세 설계(빈도 카운터 방식, 자료구조 3안 비교, Store 변경 지점, LRU와 제거 결과가 갈리는 예시): [`design.md` 8.1](design.md#81-lru--lfu-전환)
+
 **답변.** LFU는 "가장 적게 사용된 키"를 제거하므로, 사용 횟수(빈도)별로 키를 묶어야 합니다. O(1) LFU의 대표 구조는 다음과 같습니다.
 
 ```
@@ -218,6 +221,8 @@ min_freq : 현재 가장 작은 빈도
 
 근거 데이터: `python scripts/benchmark.py` → [`benchmark.md`](benchmark.md)
 
+📄 단계별 측정(리사이즈 비중, KEYS 수집·렌더링 분리, 엔트리당 메모리)과 샤딩·병렬화·I/O 대책: [`benchmark.md` 10만 건 규모 병목 분석](benchmark.md#10만-건-규모-병목-분석)
+
 **답변.** 측정해 보면 GET은 10만 건에서도 처리량이 유지되지만, 다음 지점에서 비용이 드러납니다.
 
 | 병목 | 원인 | 개선 |
@@ -230,6 +235,8 @@ min_freq : 현재 가장 작은 빈도
 | **파이썬 해시 계산** | 바이트마다 파이썬 반복문 | 긴 키에서 비용 증가 → 실무라면 C 확장이나 내장 해시 사용 |
 
 ### 4-3. used_memory에 자료구조 오버헤드까지 포함하면 무엇이 달라지고, 공정한 비교를 위해 어떤 보정이 필요한가
+
+📄 실측 오버헤드(`scripts/memory_overhead.py`), 과제 예시를 다른 모델로 재생한 결과, 보정 방법과 채점 영향 표: [`design.md` 8.2](design.md#82-used_memory-모델-변경의-영향)
 
 **답변.** 지금 공식은 키와 값의 바이트만 셉니다. 오버헤드(노드 객체, 포인터, 버킷 배열, 힙 배열, Entry 객체)를 포함하면 다음이 달라집니다.
 
@@ -253,4 +260,4 @@ min_freq : 현재 가장 작은 빈도
 python -m unittest discover -s tests -t . -v
 ```
 
-101개 테스트가 Python 3.8과 3.13에서 통과합니다. GitHub Actions(`.github/workflows/tests.yml`)가 push마다 Python 3.8 ~ 3.13에서 자동으로 실행합니다.
+테스트는 106개입니다. GitHub Actions(`.github/workflows/tests.yml`)가 push마다 Python 3.8 · 3.10 · 3.12 · 3.13 · 3.14에서 자동으로 실행하고, `uv run scripts/ci_local.py`로 같은 단계를 로컬에서 실행할 수 있습니다.
