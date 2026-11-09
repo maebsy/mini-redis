@@ -87,19 +87,19 @@ class DoublyLinkedList:
 
     # ---------------------------------------------------------- 공개 메서드
     def insert_front(self, data: Any) -> Node:
-        """맨 앞에 삽입하고 생성된 노드를 반환한다. O(1)"""
+        """맨 앞에 삽입하고 생성된 노드를 반환한다. O(1) — 포인터 4개 연결"""
         node = Node(data)
         self._link_after(self._head, node)
         return node
 
     def insert_back(self, data: Any) -> Node:
-        """맨 뒤에 삽입하고 생성된 노드를 반환한다. O(1)"""
+        """맨 뒤에 삽입하고 생성된 노드를 반환한다. O(1) — 포인터 4개 연결"""
         node = Node(data)
         self._link_after(self._tail.prev, node)  # type: ignore[arg-type]
         return node
 
     def remove_front(self) -> Any:
-        """맨 앞 노드를 제거하고 data 를 반환한다. 비어 있으면 IndexError. O(1)"""
+        """맨 앞 노드를 제거하고 data 를 반환한다. 비어 있으면 IndexError. O(1) — 이웃 포인터 2개 + 노드 정리 2개"""
         if self._size == 0:
             raise IndexError("remove_front from empty list")
         node = self._head.next
@@ -107,7 +107,7 @@ class DoublyLinkedList:
         return node.data  # type: ignore[union-attr]
 
     def remove_back(self) -> Any:
-        """맨 뒤 노드를 제거하고 data 를 반환한다. 비어 있으면 IndexError. O(1)"""
+        """맨 뒤 노드를 제거하고 data 를 반환한다. 비어 있으면 IndexError. O(1) — 이웃 포인터 2개 + 노드 정리 2개"""
         if self._size == 0:
             raise IndexError("remove_back from empty list")
         node = self._tail.prev
@@ -115,7 +115,7 @@ class DoublyLinkedList:
         return node.data  # type: ignore[union-attr]
 
     def remove_node(self, node: Node) -> Any:
-        """특정 노드를 제거하고 data 를 반환한다. O(1)
+        """특정 노드를 제거하고 data 를 반환한다. O(1) — 이웃 포인터 2개 + 노드 정리 2개
 
         전제: ``node`` 는 이 리스트의 노드여야 한다(소유 리스트를 노드에 저장하지 않으므로
         O(1)로 검사할 수 없다). 이미 제거된 노드는 ``prev is None`` 으로 감지한다.
@@ -126,7 +126,7 @@ class DoublyLinkedList:
         return node.data
 
     def move_to_front(self, node: Node) -> None:
-        """기존 노드를 맨 앞으로 옮긴다(노드 객체 재사용). O(1)
+        """기존 노드를 맨 앞으로 옮긴다(노드 객체 재사용). O(1) — 떼기 4개 + 연결 4개, 리스트 길이와 무관
 
         LRU 에서 "방금 사용한 키"를 MRU 위치로 올릴 때 사용한다.
         """
